@@ -90,6 +90,12 @@
   }
   .link .break p{margin-left:0;font-size:14px;color:var(--ink)}
   .link .break em{font-style:italic;color:var(--green)}
+  .ilink{
+    color:var(--orange);text-decoration:none;font-weight:500;
+    border-bottom:1px solid rgba(255,140,26,.4);transition:border-color .2s;
+    white-space:nowrap;
+  }
+  .ilink:hover{border-color:var(--orange)}
 
   /* reassurance note */
   .note{
@@ -135,6 +141,13 @@
     padding:10px 18px;border-radius:9px;cursor:pointer;transition:color .2s,border-color .2s;
   }
   .ci-result .again:hover{color:var(--ink);border-color:var(--ink)}
+  .ci-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .goriver{
+    background:var(--orange);color:#1a1a18;text-decoration:none;
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;font-weight:500;
+    padding:11px 20px;border-radius:9px;transition:filter .15s;
+  }
+  .goriver:hover{filter:brightness(1.08)}
 
   .streak{
     margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:12px;
@@ -154,7 +167,7 @@
   <header>
     <div class="eyebrow">Praxis · ACT · defusión</div>
     <h1>Mis señales de <em>fusión</em></h1>
-    <p class="lede">No tienes que cazar el pensamiento mientras pasa — eso es casi imposible. <strong>Tu fusión deja huellas.</strong> Aprende a reconocer estas tres y tendrás media batalla ganada. No para no fusionarte nunca, sino para despegarte más rápido cada vez.</p>
+    <p class="lede">No tienes que cazar el pensamiento mientras pasa — eso es casi imposible. <strong>Tu fusión deja huellas.</strong> Lee esta cadena en frío para grabártela, y léela en caliente para cacharte: muchas veces es justo leyéndola que te das cuenta de en qué eslabón estás. No para no fusionarte nunca, sino para despegarte más rápido cada vez.</p>
   </header>
 
   <div class="section-label">Tu secuencia — eslabón por eslabón</div>
@@ -167,7 +180,7 @@
       <p>Esa sensación de irrealidad o zumbido en la cabeza es desrealización: un síntoma físico de ansiedad alta, incomodísimo pero inofensivo. Es tu sistema nervioso sobreactivado, no tu mente fallando.</p>
       <div class="break">
         <div class="bl">El quiebre</div>
-        <p>Cuando notes la cabeza rara, nómbralo: <em>"es ansiedad en el cuerpo, no una señal de peligro."</em> Pies en el piso, tres respiraciones lentas. El síntoma no es evidencia de nada.</p>
+        <p>Cuando notes la cabeza rara, nómbralo: <em>"es ansiedad en el cuerpo, no una señal de peligro."</em> Pies en el piso, tres respiraciones lentas. El síntoma no es evidencia de nada. Si ya hay un pensamiento pegado, <a class="ilink" href="rio.html">suéltalo en el río →</a></p>
       </div>
     </div>
 
@@ -179,7 +192,7 @@
       <p>Tu mente se va al futuro catastrófico. El "voy a enloquecer" es el más pegajoso porque es un pensamiento sobre tu propia mente. Ojo al círculo: sientes la cabeza rara → lo lees como "voy a enloquecer" → más ansiedad → la cabeza peor.</p>
       <div class="break">
         <div class="bl">El quiebre</div>
-        <p>No analices si tiene razón. Que tu mente hable en futuro de catástrofe <em>ya te dice</em> que estás fusionado. Antepón: <em>"estoy teniendo el pensamiento de que voy a enloquecer."</em></p>
+        <p>No analices si tiene razón. Que tu mente hable en futuro de catástrofe <em>ya te dice</em> que estás fusionado. Antepón: <em>"estoy teniendo el pensamiento de que voy a enloquecer."</em> Y si quieres verlo pasar, <a class="ilink" href="rio.html">suéltalo en el río →</a></p>
       </div>
     </div>
 
@@ -191,7 +204,7 @@
       <p>Cerrarte y el scroll compulsivo son evitación experiencial: buscas escapar de la sensación. Pero son tu señal más fácil de cachar, porque las haces con las manos.</p>
       <div class="break">
         <div class="bl">El quiebre</div>
-        <p>Cuando te descubras con el cel sin saber por qué, o cerrándote, deja que eso sea tu despertador: <em>"esto es la evitación. ¿Qué haría ahora si la rumia no mandara?"</em> Y vuelve a lo tuyo, con el pensamiento puesto.</p>
+        <p>Cuando te descubras con el cel sin saber por qué, o cerrándote, deja que eso sea tu despertador: <em>"esto es la evitación. ¿Qué haría ahora si la rumia no mandara?"</em> Y vuelve a lo tuyo, con el pensamiento puesto. Si necesitas soltarlo antes, <a class="ilink" href="rio.html">abre el río →</a></p>
       </div>
     </div>
   </div>
@@ -218,7 +231,10 @@
     <div class="ci-result" id="ci-result">
       <div class="rtitle" id="ci-rtitle"></div>
       <p id="ci-rbody"></p>
-      <button class="again" onclick="resetCheckIn()">listo</button>
+      <div class="ci-actions">
+        <a class="goriver" id="ci-river" href="rio.html" style="display:none">soltarlo en el río →</a>
+        <button class="again" onclick="resetCheckIn()">listo</button>
+      </div>
     </div>
 
     <div class="streak empty" id="streak">aún no has hecho check-ins hoy</div>
@@ -260,6 +276,7 @@
     document.getElementById('ci-question').style.display='none';
     document.getElementById('ci-rtitle').textContent=results[kind].t;
     document.getElementById('ci-rbody').textContent=results[kind].b;
+    document.getElementById('ci-river').style.display = (kind==='hooked') ? 'inline-block' : 'none';
     document.getElementById('ci-result').classList.add('show');
     renderStreak();
   }

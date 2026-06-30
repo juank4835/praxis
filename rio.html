@@ -72,6 +72,12 @@
   .btn:disabled{opacity:.35;cursor:default;filter:none}
   .btn.ghost{background:none;color:var(--ink-faint);border:1px solid var(--ink-faint);margin-top:14px}
   .btn.ghost:hover{color:var(--ink);border-color:var(--ink)}
+  .backlink{
+    display:inline-block;margin-top:26px;color:var(--ink-faint);text-decoration:none;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;
+    border-bottom:1px solid transparent;transition:color .2s,border-color .2s;
+  }
+  .backlink:hover{color:var(--green);border-color:rgba(127,176,105,.4)}
 
   /* during float: minimal guidance */
   .guide{
@@ -157,6 +163,7 @@
     <div class="count" id="count"></div>
     <button class="btn" id="closeBtn" onclick="restart()">soltar otro</button>
     <button class="btn ghost" onclick="restart()">ya estoy bien</button>
+    <a class="backlink" href="senales.html">¿qué eslabón fue? · repasar mis señales en frío →</a>
   </div>
 
   <!-- LIMIT REACHED -->
@@ -171,6 +178,7 @@
       <div class="dry-step" data-step="3">¿Qué harías ahora si él no mandara? Ve y hazlo.</div>
     </div>
     <button class="btn ghost" id="limitBtn" onclick="restart()">entendido</button>
+    <a class="backlink" href="senales.html">repasar mis señales en frío →</a>
   </div>
 </div>
 

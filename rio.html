@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El río · Praxis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#262624;
+    --ink:#ede9e3;
+    --ink-dim:#a8a39a;
+    --ink-faint:#6f6a62;
+    --orange:#FF8C1A;
+    --green:#7fb069;
+    --water-deep:#1c2420;
+    --water:#26322b;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  #scene{position:fixed;inset:0;width:100%;height:100%;display:block}
+
+  /* overlay UI */
+  .ui{position:fixed;inset:0;display:flex;flex-direction:column;pointer-events:none}
+  .ui > *{pointer-events:auto}
+
+  /* intro */
+  .stage{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:32px;
+    text-align:center;transition:opacity .8s ease, transform .8s ease;
+  }
+  .stage.hidden{opacity:0;transform:translateY(-14px);pointer-events:none}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.24em;
+    text-transform:uppercase;color:var(--orange);margin-bottom:22px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:500;font-style:italic;
+    font-size:clamp(34px,7vw,58px);line-height:1.08;letter-spacing:-.02em;
+    margin-bottom:20px;max-width:16ch;
+  }
+  .sub{color:var(--ink-dim);font-size:16px;max-width:42ch;line-height:1.6;margin-bottom:40px}
+
+  textarea{
+    width:min(92vw,520px);background:rgba(38,38,36,.7);
+    border:1px solid rgba(127,176,105,.3);border-radius:14px;
+    color:var(--ink);font-family:'Fraunces',serif;font-size:20px;line-height:1.4;
+    padding:20px 22px;resize:none;height:120px;backdrop-filter:blur(8px);
+    transition:border-color .3s;
+  }
+  textarea::placeholder{color:var(--ink-faint);font-style:italic}
+  textarea:focus{outline:none;border-color:var(--orange)}
+
+  .btn{
+    margin-top:24px;background:var(--orange);color:#1a1a18;border:none;
+    font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;
+    padding:14px 30px;border-radius:11px;cursor:pointer;font-weight:500;
+    transition:filter .15s,transform .1s,opacity .3s;
+  }
+  .btn:hover{filter:brightness(1.08)}
+  .btn:active{transform:scale(.97)}
+  .btn:disabled{opacity:.35;cursor:default;filter:none}
+  .btn.ghost{background:none;color:var(--ink-faint);border:1px solid var(--ink-faint);margin-top:14px}
+  .btn.ghost:hover{color:var(--ink);border-color:var(--ink)}
+
+  /* during float: minimal guidance */
+  .guide{
+    position:absolute;left:0;right:0;bottom:48px;text-align:center;
+    font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--ink-dim);
+    opacity:0;transition:opacity 1.2s ease;padding:0 24px;pointer-events:none;
+  }
+  .guide.show{opacity:1}
+
+  .topbar{
+    position:absolute;top:0;left:0;right:0;padding:22px 26px;
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-faint);opacity:0;transition:opacity 1s ease;
+  }
+  .topbar.show{opacity:1}
+  .topbar .reset{
+    background:none;border:none;color:var(--ink-faint);cursor:pointer;
+    font-family:inherit;font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    transition:color .2s;
+  }
+  .topbar .reset:hover{color:var(--orange)}
+
+  /* closing */
+  .close-stage{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;padding:32px;text-align:center;
+    opacity:0;transform:translateY(14px);transition:opacity 1s ease,transform 1s ease;
+    pointer-events:none;
+  }
+  .close-stage.show{opacity:1;transform:none;pointer-events:auto}
+  .close-stage h2{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:clamp(28px,5vw,42px);line-height:1.15;max-width:18ch;margin-bottom:18px;
+  }
+  .close-stage p{color:var(--ink-dim);font-size:16px;max-width:38ch;line-height:1.6;margin-bottom:8px}
+  .count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);letter-spacing:.1em;margin-bottom:30px}
+
+  /* dry practice steps (limit screen) */
+  .dry{display:flex;flex-direction:column;gap:14px;margin:8px 0 30px;max-width:380px;text-align:left}
+  .dry-step{
+    font-family:'Fraunces',serif;font-size:16px;color:var(--ink-dim);line-height:1.4;
+    padding-left:26px;position:relative;
+  }
+  .dry-step::before{
+    content:'';position:absolute;left:0;top:9px;width:8px;height:8px;border-radius:50%;
+    background:var(--green);opacity:.5;
+  }
+  .dry-step:last-child{color:var(--ink)}
+  .dry-step:last-child::before{background:var(--orange);opacity:1}
+  .dry-step em{color:var(--orange);font-style:italic}
+
+  @media(prefers-reduced-motion:reduce){
+    .stage,.guide,.topbar,.close-stage{transition:opacity .2s}
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<div class="ui">
+  <div class="topbar" id="topbar">
+    <span id="topLabel">Praxis · defusión</span>
+    <button class="reset" onclick="restart()">empezar de nuevo</button>
+  </div>
+
+  <!-- INTRO -->
+  <div class="stage" id="intro">
+    <div class="eyebrow">El río</div>
+    <h1>Pon el pensamiento sobre el agua.</h1>
+    <p class="sub">No tienes que resolverlo ni callarlo. Solo escríbelo, suéltalo en la corriente, y míralo pasar. Eso es todo lo que hace falta.</p>
+    <textarea id="thought" maxlength="140" placeholder="¿Qué pensamiento te tiene atrapado ahora mismo?"></textarea>
+    <button class="btn" id="release" disabled onclick="release()">soltarlo en el río</button>
+  </div>
+
+  <!-- GUIDE during float -->
+  <div class="guide" id="guide"></div>
+
+  <!-- CLOSE -->
+  <div class="close-stage" id="close">
+    <h2 id="closeTitle">El pensamiento siguió su curso. Tú te quedaste aquí.</h2>
+    <p id="closeBody">No desapareció porque lo combatieras. Pasó porque dejaste de sostenerlo.</p>
+    <div class="count" id="count"></div>
+    <button class="btn" id="closeBtn" onclick="restart()">soltar otro</button>
+    <button class="btn ghost" onclick="restart()">ya estoy bien</button>
+  </div>
+
+  <!-- LIMIT REACHED -->
+  <div class="close-stage" id="limit">
+    <div class="eyebrow" style="position:static;margin-bottom:22px">Praxis · disposición</div>
+    <h2 id="limitTitle"></h2>
+    <p id="limitBody"></p>
+    <div class="dry" id="dry">
+      <div class="dry-step" data-step="0">Nota el pensamiento. No lo empujes.</div>
+      <div class="dry-step" data-step="1">Dilo en tu mente: <em>"ahí estás otra vez."</em></div>
+      <div class="dry-step" data-step="2">Déjalo ahí. No tienes que hacer nada con él.</div>
+      <div class="dry-step" data-step="3">¿Qué harías ahora si él no mandara? Ve y hazlo.</div>
+    </div>
+    <button class="btn ghost" id="limitBtn" onclick="restart()">entendido</button>
+  </div>
+</div>
+
+<script>
+const cv = document.getElementById('scene');
+const ctx = cv.getContext('2d');
+let W,H,DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio||1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  cv.width = W*DPR; cv.height = H*DPR;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();
+window.addEventListener('resize',resize);
+
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// --- water ripples (ambient) ---
+let t = 0;
+const ripples = [];
+function addRipple(x,y){ ripples.push({x,y,r:0,a:.5}); }
+
+// --- the leaf carrying the thought ---
+let leaf = null;
+let released = 0;
+
+// memory of what's been released, to recognise the same thought returning
+let lastWasRepeat = 0;    // how many times the current thought has come back
+let lastText = '';        // last thought released (to re-offer if it returns)
+
+// --- limits (entrenamiento, no castigo) ---
+const DAILY_MAX = 3;      // usos totales por día
+const SAME_MAX  = 2;      // veces el mismo pensamiento por día
+
+function norm(s){
+  return s.toLowerCase()
+          .normalize('NFD').replace(/[\u0300-\u036f]/g,'') // strip accents
+          .replace(/[^a-z0-9ñ ]/g,'')                       // strip punctuation
+          .replace(/\s+/g,' ').trim();
+}
+
+// persistence: localStorage where available (GitHub Pages), memory fallback otherwise
+let memStore = null;
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+}
+function loadState(){
+  let raw = null;
+  try{ raw = localStorage.getItem('praxis_rio'); }catch(e){ raw = memStore; }
+  let s = raw ? JSON.parse(raw) : null;
+  if(!s || s.day !== todayKey()){
+    s = { day: todayKey(), total: 0, byThought: {} }; // fresh day → resets at midnight
+  }
+  return s;
+}
+function saveState(s){
+  const raw = JSON.stringify(s);
+  try{ localStorage.setItem('praxis_rio', raw); }catch(e){ memStore = raw; }
+}
+let state = loadState();
+
+// query helpers
+function usesLeftToday(){ return Math.max(0, DAILY_MAX - state.total); }
+function timesForThought(key){ return state.byThought[key] || 0; }
+
+function makeLeaf(text){
+  // adjust font size to amount of text so it all fits
+  const len = text.length;
+  let fontSize = 14;
+  if(len > 60) fontSize = 13;
+  if(len > 90) fontSize = 12;
+  if(len > 115) fontSize = 11;
+
+  // wrap into lines at a comfortable width, NO truncation
+  ctx.font = '500 '+fontSize+'px Fraunces, serif';
+  const maxLineW = 150;
+  const words = text.split(' ');
+  let line=''; const lines=[];
+  for(const w of words){
+    const test = line ? line+' '+w : w;
+    if(ctx.measureText(test).width > maxLineW && line){ lines.push(line); line=w; }
+    else line=test;
+  }
+  if(line) lines.push(line);
+
+  const lineH = fontSize + 4;
+  // widest line drives the leaf half-width
+  let widest = 0;
+  for(const l of lines) widest = Math.max(widest, ctx.measureText(l).width);
+  const halfW = Math.max(46, widest/2 + 28);
+  const halfH = Math.max(26, (lines.length*lineH)/2 + 16);
+
+  return {
+    text, lines, fontSize, lineH, halfW, halfH,
+    x: -halfW - 20,
+    y: H*0.62,
+    vx: 0.16 + Math.random()*0.08,
+    drift: 0,
+    rot: -0.05,
+    scale: 1,
+    opacity: 1,
+    born: t
+  };
+}
+
+function draw(){
+  t += reduceMotion ? 0.4 : 1;
+
+  // water gradient
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#262624');
+  g.addColorStop(0.45,'#222a25');
+  g.addColorStop(1,'#1a211c');
+  ctx.fillStyle = g;
+  ctx.fillRect(0,0,W,H);
+
+  // flowing current lines
+  ctx.save();
+  for(let i=0;i<7;i++){
+    const yBase = H*0.30 + i*(H*0.5/7);
+    ctx.beginPath();
+    ctx.globalAlpha = 0.04 + (i%2)*0.02;
+    ctx.strokeStyle = '#7fb069';
+    ctx.lineWidth = 1;
+    for(let x=0;x<=W;x+=12){
+      const y = yBase + Math.sin((x*0.012)+(t*0.006)+i)*6;
+      x===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+  ctx.restore();
+
+  // shimmer specks moving with current
+  ctx.save();
+  for(let i=0;i<40;i++){
+    const sx = ((i*137 + t*0.5) % (W+40)) - 20;
+    const sy = H*0.28 + ((i*89)% (H*0.6));
+    ctx.globalAlpha = 0.06 + 0.05*Math.sin(t*0.04+i);
+    ctx.fillStyle = '#cfe3c2';
+    ctx.fillRect(sx,sy,2,1.4);
+  }
+  ctx.restore();
+
+  // ripples
+  for(let i=ripples.length-1;i>=0;i--){
+    const r = ripples[i];
+    r.r += 0.9; r.a *= 0.97;
+    ctx.beginPath();
+    ctx.globalAlpha = r.a;
+    ctx.strokeStyle = '#7fb069';
+    ctx.lineWidth = 1;
+    ctx.arc(r.x,r.y,r.r,0,Math.PI*2);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    if(r.a < 0.02) ripples.splice(i,1);
+  }
+
+  // leaf
+  if(leaf){
+    const age = t - leaf.born;
+    leaf.x += leaf.vx;
+    leaf.drift += 0.01;
+    leaf.y += Math.sin(leaf.drift)*0.25;
+    leaf.rot = Math.sin(leaf.drift*0.7)*0.08;
+    // as it travels far, shrink + fade
+    if(leaf.x > W*0.70 - leaf.halfW){
+      leaf.scale = Math.max(0.4, leaf.scale - 0.0008);
+      leaf.opacity = Math.max(0, leaf.opacity - 0.0022);
+    }
+    if(age % 90 < 2) addRipple(leaf.x, leaf.y+6);
+
+    ctx.save();
+    ctx.translate(leaf.x, leaf.y);
+    ctx.rotate(leaf.rot);
+    ctx.scale(leaf.scale, leaf.scale);
+    ctx.globalAlpha = leaf.opacity;
+
+    // leaf body (sized to the text)
+    const hw = leaf.halfW, hh = leaf.halfH;
+    ctx.beginPath();
+    ctx.moveTo(-hw,0);
+    ctx.quadraticCurveTo(0,-hh,hw,0);
+    ctx.quadraticCurveTo(0,hh,-hw,0);
+    ctx.closePath();
+    const lg = ctx.createLinearGradient(-hw,-hh,hw,hh);
+    lg.addColorStop(0,'#7fb069');
+    lg.addColorStop(1,'#5c8a4a');
+    ctx.fillStyle = lg;
+    ctx.fill();
+    // central vein
+    ctx.beginPath();
+    ctx.moveTo(-hw+4,0); ctx.lineTo(hw-4,0);
+    ctx.strokeStyle = 'rgba(28,36,32,.45)';
+    ctx.lineWidth = 1.4; ctx.stroke();
+
+    // the thought text on the leaf — every line, no truncation
+    ctx.globalAlpha = leaf.opacity;
+    ctx.fillStyle = '#1c2420';
+    ctx.font = '500 '+leaf.fontSize+'px Fraunces, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const startY = -((leaf.lines.length-1)*leaf.lineH)/2;
+    leaf.lines.forEach((l,i)=>ctx.fillText(l, 0, startY + i*leaf.lineH));
+    ctx.restore();
+
+    // when fully gone → closing
+    if(leaf.opacity <= 0 && !closing){
+      triggerClose();
+    }
+  }
+
+  requestAnimationFrame(draw);
+}
+
+draw();
+
+// --- interaction flow ---
+const intro = document.getElementById('intro');
+const ta = document.getElementById('thought');
+const releaseBtn = document.getElementById('release');
+const guide = document.getElementById('guide');
+const topbar = document.getElementById('topbar');
+const closeEl = document.getElementById('close');
+let closing = false;
+
+ta.addEventListener('input',()=>{
+  releaseBtn.disabled = ta.value.trim().length < 2 || usesLeftToday() <= 0;
+});
+
+const guideLines = [
+  'No lo empujes. Solo míralo.',
+  'Sigue siendo solo un pensamiento. Palabras sobre una hoja.',
+  'No tienes que creerle. No tienes que pelearlo.',
+  'Mira cómo se hace pequeño…',
+  'La corriente se lo lleva. Tú te quedas en la orilla.'
+];
+let guideTimers = [];
+
+function release(){
+  const txt = ta.value.trim();
+  if(txt.length<2) return;
+
+  const key = norm(txt);
+  const sameCount = timesForThought(key);
+  const totalLeft = usesLeftToday();
+
+  // --- limit checks: training, not punishment ---
+  if(totalLeft <= 0){
+    showLimit('daily');
+    return;
+  }
+  if(sameCount >= SAME_MAX){
+    showLimit('same');
+    return;
+  }
+
+  // record this release
+  state.total += 1;
+  state.byThought[key] = sameCount + 1;
+  saveState(state);
+  lastWasRepeat = state.byThought[key];
+  lastText = txt;
+
+  leaf = makeLeaf(txt);
+  closing = false;
+  intro.classList.add('hidden');
+  topbar.classList.add('show');
+
+  // staged guidance
+  guideLines.forEach((line,i)=>{
+    guideTimers.push(setTimeout(()=>{
+      guide.textContent = line;
+      guide.classList.add('show');
+      if(i < guideLines.length-1){
+        guideTimers.push(setTimeout(()=>guide.classList.remove('show'),5200));
+      }
+    }, 3000 + i*7000));
+  });
+}
+
+function showLimit(kind){
+  const title = document.getElementById('limitTitle');
+  const body = document.getElementById('limitBody');
+
+  if(kind === 'daily'){
+    title.textContent = 'Ya lo soltaste hoy las veces que hacía falta.';
+    body.textContent = 'Tres veces es suficiente. Si vuelve otra vez, no es que necesites la app — es la oportunidad de practicarlo en seco. Nótalo, déjalo estar, y vuelve a lo tuyo.';
+  } else {
+    title.textContent = 'Este pensamiento ya lo soltaste dos veces hoy.';
+    body.textContent = 'Vuelve, y no pasa nada — ya lo confirmaste. A la tercera no necesitas soltarlo otra vez: necesitas mover la atención hacia algo que te importe, con el pensamiento puesto.';
+  }
+
+  intro.classList.add('hidden');
+  closeEl.classList.remove('show');
+  document.getElementById('limit').classList.add('show');
+}
+
+function triggerClose(){
+  closing = true;
+  released++;
+  guide.classList.remove('show');
+
+  const title = document.getElementById('closeTitle');
+  const body = document.getElementById('closeBody');
+  const countEl = document.getElementById('count');
+  const btn = document.getElementById('closeBtn');
+
+  if(lastWasRepeat <= 1){
+    // first time for this thought
+    title.textContent = 'El pensamiento siguió su curso. Tú te quedaste aquí.';
+    body.textContent = 'No desapareció porque lo combatieras. Pasó porque dejaste de sostenerlo.';
+    countEl.textContent = released===1 ? 'un pensamiento soltado' : released+' pensamientos soltados';
+    btn.textContent = 'soltar otro';
+  } else {
+    // same thought has come back — reframe as practice, not failure
+    const n = lastWasRepeat;
+    const reps = [
+      '', '',
+      'Volvió. Lo soltaste otra vez. Eso no es que falle — es exactamente lo que es defusión.',
+      'Tercera vez. No estás retrocediendo: estás entrenando el mismo músculo, repetición tras repetición.',
+      'Cuatro veces. La mente insiste; tú también. Cada vez que lo dejas pasar, ganas — no pierdes.',
+      'Sigue volviendo, y tú sigues soltándolo. El pensamiento no manda. Lo estás demostrando.'
+    ];
+    const msg = reps[Math.min(n, reps.length-1)];
+    title.textContent = 'No tenía que irse para siempre.';
+    body.textContent = msg;
+    countEl.textContent = 'lo has soltado ' + n + ' veces';
+    btn.textContent = 'si vuelve, lo suelto otra vez';
+  }
+
+  closeEl.classList.add('show');
+}
+
+function restart(){
+  guideTimers.forEach(clearTimeout); guideTimers=[];
+  leaf = null; closing=false;
+  guide.classList.remove('show');
+  closeEl.classList.remove('show');
+  document.getElementById('limit').classList.remove('show');
+  topbar.classList.remove('show');
+  ta.value=''; releaseBtn.disabled=true;
+
+  const left = usesLeftToday();
+  if(left <= 0){
+    // out of uses → invite dry practice instead of the river
+    ta.placeholder = 'Por hoy, practícalo sin la app: nótalo, déjalo estar.';
+    releaseBtn.disabled = true;
+  } else if(lastWasRepeat >= 1 && lastText){
+    ta.placeholder = '¿Volvió el mismo pensamiento? Escríbelo otra vez y suéltalo.';
+  } else {
+    ta.placeholder = '¿Qué pensamiento te tiene atrapado ahora mismo?';
+  }
+  intro.classList.remove('hidden');
+  setTimeout(()=>ta.focus(),300);
+}
+
+function initDailyState(){
+  const left = usesLeftToday();
+  if(left <= 0){
+    ta.placeholder = 'Por hoy, practícalo sin la app: nótalo, déjalo estar.';
+    releaseBtn.disabled = true;
+  }
+}
+initDailyState();
+
+setTimeout(()=>ta.focus(),600);
+</script>
+</body>
+</html>

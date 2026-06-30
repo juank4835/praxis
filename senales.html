@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis señales · Praxis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#262624;
+    --bg-2:#2e2e2b;
+    --bg-3:#33332f;
+    --ink:#ede9e3;
+    --ink-dim:#a8a39a;
+    --ink-faint:#6f6a62;
+    --orange:#FF8C1A;
+    --green:#7fb069;
+    --line:#3c3b37;
+    --line-2:#494843;
+    --red-soft:#c97b5a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Inter',sans-serif;line-height:1.55;
+    -webkit-font-smoothing:antialiased;padding:0 20px 90px;
+  }
+  .wrap{max-width:680px;margin:0 auto}
+
+  header{padding:60px 0 36px;border-bottom:1px solid var(--line)}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--orange);margin-bottom:18px;
+  }
+  h1{
+    font-family:'Fraunces',serif;font-weight:600;font-size:clamp(34px,7vw,54px);
+    line-height:1.04;letter-spacing:-.02em;margin-bottom:18px;
+  }
+  h1 em{font-style:italic;color:var(--orange)}
+  .lede{font-size:16px;color:var(--ink-dim);max-width:52ch}
+  .lede strong{color:var(--ink);font-weight:500}
+
+  .section-label{
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--ink-faint);margin:48px 0 8px;
+  }
+  .section-intro{font-size:15px;color:var(--ink-dim);margin-bottom:26px;max-width:50ch}
+
+  /* THE CHAIN — signature element */
+  .chain{position:relative;padding-left:8px}
+  .link{
+    position:relative;background:var(--bg-2);border:1px solid var(--line);
+    border-radius:16px;padding:24px 24px 24px 26px;margin-bottom:0;
+    transition:border-color .2s,transform .15s;
+  }
+  .link:hover{border-color:var(--line-2);transform:translateX(2px)}
+  .link::before{
+    content:attr(data-n);position:absolute;top:24px;left:-1px;
+    transform:translateX(-50%);
+    background:var(--bg);color:var(--orange);
+    font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;
+    width:30px;height:30px;border:1px solid var(--line-2);border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .connector{
+    height:34px;width:2px;margin-left:13px;
+    background:linear-gradient(to bottom,var(--orange),var(--red-soft));
+    opacity:.5;
+  }
+  .link .tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-faint);margin-bottom:10px;margin-left:18px;
+  }
+  .link h3{
+    font-family:'Fraunces',serif;font-weight:500;font-size:21px;line-height:1.25;
+    margin-bottom:10px;margin-left:18px;
+  }
+  .link h3 em{font-style:italic;color:var(--orange)}
+  .link p{font-size:14.5px;color:var(--ink-dim);margin-left:18px;max-width:46ch}
+  .link .break{
+    margin-top:16px;margin-left:18px;padding:12px 16px;
+    background:var(--bg-3);border-left:2px solid var(--green);border-radius:0 9px 9px 0;
+  }
+  .link .break .bl{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--green);margin-bottom:5px;
+  }
+  .link .break p{margin-left:0;font-size:14px;color:var(--ink)}
+  .link .break em{font-style:italic;color:var(--green)}
+
+  /* reassurance note */
+  .note{
+    margin-top:30px;background:var(--bg-2);border:1px solid var(--line);
+    border-radius:14px;padding:22px 24px;
+  }
+  .note .nh{
+    font-family:'Fraunces',serif;font-style:italic;font-size:17px;
+    color:var(--ink);margin-bottom:8px;
+  }
+  .note p{font-size:14px;color:var(--ink-dim)}
+
+  /* CHECK-IN */
+  .checkin{
+    margin-top:18px;background:var(--bg-2);border:1px solid var(--line);
+    border-radius:16px;padding:28px 26px;
+  }
+  .ci-q{font-family:'Fraunces',serif;font-size:22px;font-weight:500;margin-bottom:6px}
+  .ci-sub{font-size:14px;color:var(--ink-dim);margin-bottom:22px}
+  .ci-opts{display:grid;gap:10px}
+  .ci-opt{
+    text-align:left;background:var(--bg-3);border:1px solid var(--line);
+    color:var(--ink);font-family:inherit;font-size:15px;
+    padding:15px 18px;border-radius:11px;cursor:pointer;
+    transition:border-color .18s,background .18s,transform .12s;
+    display:flex;align-items:center;gap:12px;
+  }
+  .ci-opt:hover{border-color:var(--line-2);background:#3a3a35;transform:translateX(2px)}
+  .ci-opt:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+  .ci-opt .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  .ci-opt.calm .dot{background:var(--green)}
+  .ci-opt.mild .dot{background:var(--orange)}
+  .ci-opt.hooked .dot{background:var(--red-soft)}
+
+  .ci-result{display:none;animation:fade .3s ease}
+  .ci-result.show{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .ci-result .rtitle{font-family:'Fraunces',serif;font-style:italic;font-size:20px;margin-bottom:10px;color:var(--orange)}
+  .ci-result p{font-size:15px;color:var(--ink-dim);margin-bottom:16px}
+  .ci-result .again{
+    background:none;border:1px solid var(--ink-faint);color:var(--ink-faint);
+    font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;
+    padding:10px 18px;border-radius:9px;cursor:pointer;transition:color .2s,border-color .2s;
+  }
+  .ci-result .again:hover{color:var(--ink);border-color:var(--ink)}
+
+  .streak{
+    margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:12px;
+    letter-spacing:.08em;color:var(--green);text-align:center;
+  }
+  .streak.empty{color:var(--ink-faint)}
+
+  footer{
+    margin-top:46px;padding-top:24px;border-top:1px solid var(--line);
+    font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--ink-faint);
+  }
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Praxis · ACT · defusión</div>
+    <h1>Mis señales de <em>fusión</em></h1>
+    <p class="lede">No tienes que cazar el pensamiento mientras pasa — eso es casi imposible. <strong>Tu fusión deja huellas.</strong> Aprende a reconocer estas tres y tendrás media batalla ganada. No para no fusionarte nunca, sino para despegarte más rápido cada vez.</p>
+  </header>
+
+  <div class="section-label">Tu secuencia — eslabón por eslabón</div>
+  <p class="section-intro">Tu fusión casi siempre va en este orden. Puedes interrumpirla en cualquier eslabón, y mientras más arriba, más fácil.</p>
+
+  <div class="chain">
+    <div class="link" data-n="1">
+      <div class="tag">El cuerpo · tu alarma más temprana</div>
+      <h3>Cabeza acelerada y <em>adormecida</em></h3>
+      <p>Esa sensación de irrealidad o zumbido en la cabeza es desrealización: un síntoma físico de ansiedad alta, incomodísimo pero inofensivo. Es tu sistema nervioso sobreactivado, no tu mente fallando.</p>
+      <div class="break">
+        <div class="bl">El quiebre</div>
+        <p>Cuando notes la cabeza rara, nómbralo: <em>"es ansiedad en el cuerpo, no una señal de peligro."</em> Pies en el piso, tres respiraciones lentas. El síntoma no es evidencia de nada.</p>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="link" data-n="2">
+      <div class="tag">La mente · tu palabra-bandera</div>
+      <h3>"Y si…" → <em>"voy a enloquecer"</em></h3>
+      <p>Tu mente se va al futuro catastrófico. El "voy a enloquecer" es el más pegajoso porque es un pensamiento sobre tu propia mente. Ojo al círculo: sientes la cabeza rara → lo lees como "voy a enloquecer" → más ansiedad → la cabeza peor.</p>
+      <div class="break">
+        <div class="bl">El quiebre</div>
+        <p>No analices si tiene razón. Que tu mente hable en futuro de catástrofe <em>ya te dice</em> que estás fusionado. Antepón: <em>"estoy teniendo el pensamiento de que voy a enloquecer."</em></p>
+      </div>
+    </div>
+
+    <div class="connector"></div>
+
+    <div class="link" data-n="3">
+      <div class="tag">La conducta · lo que otros notarían</div>
+      <h3>Te aíslas y <em>revisas el cel</em></h3>
+      <p>Cerrarte y el scroll compulsivo son evitación experiencial: buscas escapar de la sensación. Pero son tu señal más fácil de cachar, porque las haces con las manos.</p>
+      <div class="break">
+        <div class="bl">El quiebre</div>
+        <p>Cuando te descubras con el cel sin saber por qué, o cerrándote, deja que eso sea tu despertador: <em>"esto es la evitación. ¿Qué haría ahora si la rumia no mandara?"</em> Y vuelve a lo tuyo, con el pensamiento puesto.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="note">
+    <div class="nh">Que te preocupe enloquecer es la prueba de que no vas a hacerlo.</div>
+    <p>Quien atraviesa un episodio psicótico justamente no anda preocupado por enloquecer. Ese "yo que observa" y se asusta es la prueba de que tu capacidad de mirar tu propia mente está intacta y funcionando. Si estas señales vienen muy seguido o te cuesta dormir o funcionar, coméntalo con la Dra. Muñoz o con Giovanna — no porque vayas a enloquecer, sino porque esto se trabaja mejor acompañado.</p>
+  </div>
+
+  <div class="section-label">Check-in · entrenar en frío</div>
+  <p class="section-intro">El truco no es detectar la fusión en plena crisis, sino bajar el umbral de darte cuenta. Para un momento cuando NO hay incendio —tres veces al día— y pregúntate dónde está tu atención. Practicar el simulacro fuera de la emergencia hace que la reconozcas más rápido cuando sí llega.</p>
+
+  <div class="checkin">
+    <div id="ci-question">
+      <div class="ci-q">¿Dónde está tu atención ahora mismo?</div>
+      <div class="ci-sub">Sin juzgar. Solo nota. Lo primero que sientas.</div>
+      <div class="ci-opts">
+        <button class="ci-opt calm" onclick="checkIn('calm')"><span class="dot"></span> Aquí, en lo que estoy haciendo. Presente.</button>
+        <button class="ci-opt mild" onclick="checkIn('mild')"><span class="dot"></span> A medias — un pie aquí, otro en una historia.</button>
+        <button class="ci-opt hooked" onclick="checkIn('hooked')"><span class="dot"></span> Enganchado. Cabeza acelerada o dándole vueltas.</button>
+      </div>
+    </div>
+
+    <div class="ci-result" id="ci-result">
+      <div class="rtitle" id="ci-rtitle"></div>
+      <p id="ci-rbody"></p>
+      <button class="again" onclick="resetCheckIn()">listo</button>
+    </div>
+
+    <div class="streak empty" id="streak">aún no has hecho check-ins hoy</div>
+  </div>
+
+  <footer>Conocer tu secuencia es media batalla. La otra media es la práctica — en frío, todos los días, hasta que el darte cuenta llegue solo.</footer>
+</div>
+
+<script>
+  // persistence (localStorage on GitHub Pages; memory fallback in preview)
+  let mem = null;
+  function dayKey(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+  function load(){
+    let raw=null;
+    try{raw=localStorage.getItem('praxis_senales');}catch(e){raw=mem;}
+    let s=raw?JSON.parse(raw):null;
+    if(!s||s.day!==dayKey()) s={day:dayKey(),checkins:0,present:0};
+    return s;
+  }
+  function save(s){
+    const raw=JSON.stringify(s);
+    try{localStorage.setItem('praxis_senales',raw);}catch(e){mem=raw;}
+  }
+  let st=load();
+
+  const results={
+    calm:{t:'Presente. Esto es lo que entrenas.',
+      b:'Este es el estado que estás aprendiendo a reconocer. Nótalo bien: así se siente estar aquí, sin historia. Cuanto más conozcas esta sensación en frío, más rápido vas a notar cuándo te falta.'},
+    mild:{t:'A medias — y lo notaste. Eso es la habilidad.',
+      b:'Darte cuenta de que un pie está en una historia ya es defusión en acción. No tienes que forzarte a volver: solo nota hacia dónde se fue la atención, y suavemente tráela a lo que tienes delante.'},
+    hooked:{t:'Enganchado — y aun así paraste a mirar.',
+      b:'Que hayas podido hacer este check-in estando enganchado significa que el observador sigue ahí. Revisa tu secuencia: ¿cabeza acelerada? ¿"y si…"? ¿el cel en la mano? Nombra el eslabón en el que estás. Si quieres, abre el río y suéltalo.'}
+  };
+
+  function checkIn(kind){
+    st.checkins+=1;
+    if(kind==='calm') st.present+=1;
+    save(st);
+    document.getElementById('ci-question').style.display='none';
+    document.getElementById('ci-rtitle').textContent=results[kind].t;
+    document.getElementById('ci-rbody').textContent=results[kind].b;
+    document.getElementById('ci-result').classList.add('show');
+    renderStreak();
+  }
+  function resetCheckIn(){
+    document.getElementById('ci-result').classList.remove('show');
+    document.getElementById('ci-question').style.display='block';
+  }
+  function renderStreak(){
+    const el=document.getElementById('streak');
+    if(st.checkins===0){el.textContent='aún no has hecho check-ins hoy';el.classList.add('empty');return;}
+    el.classList.remove('empty');
+    const goal=st.checkins>=3?' · meta del día cumplida':'';
+    const c=st.checkins===1?'1 check-in hoy':st.checkins+' check-ins hoy';
+    el.textContent=c+' · '+st.present+' en presente'+goal;
+  }
+  renderStreak();
+</script>
+</body>
+</html>
